@@ -28,3 +28,4 @@ class Temperature(Node):
         output_frame = cv2.convertScaleAbs(frame, alpha=1, beta=dpg.get_value(self.temp_in))
 
         self._output_attributes[0].execute(output_frame)
+
