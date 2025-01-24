@@ -144,3 +144,6 @@ class ProjectManager:
             project_height=project_settings["height"],
             project_location=project_location
         )
+
+    def list_frames(self):
+        return sorted(self.frames_folder.glob("*.png"))

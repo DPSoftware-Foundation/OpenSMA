@@ -31,6 +31,12 @@ class ui:
             dpg.add_text("Effect")
             dpg.add_group(horizontal=True, tag="effect_window_group")
 
+        with dpg.window(label="Frames", tag="frames_window", show=True, no_close=True, no_resize=True, no_title_bar=True, no_move=True):
+            dpg.add_text("Frames")
+            # add group for frames
+            dpg.add_group(horizontal=True, tag="frames_window_group")
+
+
         dpg.add_file_dialog(label="Open Project", tag="open_project_dialog", callback=self.app.open_project, directory_selector=True, show=False)
 
         with dpg.window(label="Preferences", tag="preferences_window", show=False):

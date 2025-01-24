@@ -87,6 +87,8 @@ class App:
             frame_file = self.ProMan.frames_folder / f"{len(list(self.ProMan.frames_folder.glob('*.png'))):06d}.png"
             cv2.imwrite(str(frame_file), frame)  # Fix: Convert Path to string
 
+            self.refetch_frames_list()
+
     def render_capture(self):
         if not (self.isInitCap and self.isopenProject):
             return
@@ -101,6 +103,28 @@ class App:
             data = np.asfarray(data, dtype='f')  # Convert to 32-bit floats
             texture_data = np.true_divide(data, 255.0)  # Normalize to [0, 1]
             dpg.set_value("texture_preview", texture_data)
+
+    def refetch_frames_list(self):
+        if not self.isopenProject:
+            return
+
+        frames = self.ProMan.list_frames()
+
+        for frame in frames:
+            frame_name = frame.name
+            frame_path = frame
+
+            with dpg.texture_registry():
+                width, height, channels, data = dpg.load_image(str(frame_path))
+
+                try:
+                    dpg.add_raw_texture(width, height, data, format=dpg.mvFormat_Float_rgb, tag=f"frame_texture_{frame_name}")
+                except Exception as e:
+                    continue
+
+            with dpg.group(horizontal=True, parent="frames_window_group"):
+                dpg.add_image(f"frame_texture_{frame_name}")
+                dpg.add_button(label="Delete", callback=lambda _, __: frame_path.unlink(), tag=f"frame_delete_{frame_name}")
 
     def create_project(self, _, __):
         project_name = dpg.get_value("new_project_name")
@@ -121,16 +145,19 @@ class App:
         try:
             self.ProMan.create_project()
             self.isopenProject = True
+            self.refetch_frames_list()
             Thread(target=self.start_camera).start()
         except Exception as e:
             dpg.show_item("dialog_window")
             dpg.set_value("dialog_window_title", "can't create project")
             dpg.set_value("dialog_window_text", str(traceback.format_exc()))
 
+
     def open_project(self, _, data):
         try:
             self.ProMan = ProjectManager.load_project(data["file_path_name"])
             self.isopenProject = True
+            self.refetch_frames_list()
             Thread(target=self.start_camera).start()
         except Exception as e:
             dpg.show_item("dialog_window")
@@ -195,7 +222,7 @@ class App:
 
         raw_data = array.array("f", texture_data)
 
-        with dpg.texture_registry():
+        with dpg.texture_registry(show=True):
             dpg.add_raw_texture(self.preview_size[0], self.preview_size[1], raw_data, format=dpg.mvFormat_Float_rgb, tag="texture_preview")
             dpg.add_raw_texture(self.preview_size[0], self.preview_size[1], raw_data, format=dpg.mvFormat_Float_rgb, tag="texture_playback")
 
@@ -243,6 +270,10 @@ class App:
             effect_height = max(effect_height, 100)  # Ensure effect_window has a minimum height of 100px
 
             dpg.configure_item("effect_window", width=window_width, height=effect_height, pos=(0, effect_y))
+
+            # Frames window height at the full right side of the viewport
+            frames_width = viewport_width - window_width
+            dpg.configure_item("frames_window", width=frames_width, height=viewport_height-18, pos=(window_width, 18))
 
     def exit(self):
         self.close_project(None, None)
