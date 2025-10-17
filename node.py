@@ -1,13 +1,11 @@
 import dearpygui.dearpygui as dpg
 import numpy as np
 
-
 # Node type definitions remain the same
 class NodeType:
     SourceNode = 0
     ProcessNode = 1
     SinkNode = 2
-
 
 class OutputNodeAttribute:
     def __init__(self, label: str = "output"):
@@ -194,9 +192,9 @@ class NodeEditor:
                     node_attrs = dpg.get_item_children(node_id, slot=0)  # slot 0 contains attributes
                     if node_attrs and (link_conf["attr_1"] in node_attrs or link_conf["attr_2"] in node_attrs):
                         links_to_delete.add(link)
-            except SystemError:
+            except Exception as e:
                 # Handle case where link might have been already deleted
-                continue
+                print(e)
 
         # Delete all identified links
         for link in links_to_delete:
@@ -272,7 +270,6 @@ class NodeEditor:
         return final_frame
 
 class DragSource:
-
     def __init__(self, label: str, node_generator, data):
         self.label = label
         self._generator = node_generator
@@ -286,7 +283,6 @@ class DragSource:
 
 
 class DragSourceContainer:
-
     def __init__(self, label: str, width: int = 150, height: int = -1):
         self._label = label
         self._width = width

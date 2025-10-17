@@ -17,7 +17,7 @@ class CVSource(Node):
     def custom(self):
         dpg.add_text("CV Source")
 
-    def execute(self, frame):
+    def process(self, frame):
         self._output_attributes[0].execute(frame)
 
 class CVSink(Node):

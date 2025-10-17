@@ -7,6 +7,7 @@ class ConfigManager:
         self.config_path = config_path
 
         self.cameraID = 0
+        self.cameraURL = ""
         self.cameraResolutionWidth = 1920
         self.cameraResolutionHeight = 1080
         self.cameraFPS = 30
@@ -28,6 +29,7 @@ class ConfigManager:
         config = {
             "camera": {
                 "camera_id": self.cameraID,
+                "camera_url": self.cameraURL,
                 "resolution": {
                     "width": self.cameraResolutionWidth,
                     "height": self.cameraResolutionHeight
@@ -62,6 +64,7 @@ class ConfigManager:
 
         # Camera settings
         self.cameraID = config["camera"]["camera_id"]
+        self.cameraURL = config["camera"]["camera_url"]
         self.cameraResolution = (config["camera"]["resolution"]["width"], config["camera"]["resolution"]["height"])
         self.cameraFPS = config["camera"]["fps"]
         self.cameraBrightness = config["camera"]["brightness"]

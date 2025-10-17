@@ -39,10 +39,12 @@ class ui:
 
         dpg.add_file_dialog(label="Open Project", tag="open_project_dialog", callback=self.app.open_project, directory_selector=True, show=False)
 
-        with dpg.window(label="Preferences", tag="preferences_window", show=False):
+        with dpg.window(label="Preferences", tag="preferences_window", show=False, width=320):
             with dpg.tab_bar():
                 with dpg.tab(label="Camera"):
                     dpg.add_combo(label="Camera", items=self.app.camera_list, callback=lambda _, data: (setattr(self.app.CM, "cameraID", ast.literal_eval(data)[0]), self.app.CM.save()), default_value=self.app.camera_list[next((i for i, item in enumerate(self.app.camera_list) if item[0] == self.app.CM.cameraID), None)])
+                    dpg.add_input_text(label="Camera URL (Network)", callback=lambda _, data: (setattr(self.app.CM, "cameraURL", data), self.app.CM.save()), default_value=self.app.CM.cameraURL)
+                    dpg.add_spacer()
                     dpg.add_input_int(label="Width", default_value=self.app.CM.cameraResolutionWidth, callback=lambda _, data: (setattr(self.app.CM, "cameraResolutionWidth", data), self.app.CM.save()))
                     dpg.add_input_int(label="Height", default_value=self.app.CM.cameraResolutionHeight, callback=lambda _, data: (setattr(self.app.CM, "cameraResolutionHeight", data), self.app.CM.save()))
                     dpg.add_input_float(label="FPS", default_value=self.app.CM.cameraFPS, callback=lambda _, data: (setattr(self.app.CM, "cameraFPS", data), self.app.CM.save()))
@@ -52,6 +54,7 @@ class ui:
                     #dpg.add_input_float(label="Hue", default_value=self.app.CM.cameraHue, callback=lambda _, data: (setattr(self.app.CM, "cameraHue", data), self.app.CM.save()))
                     #dpg.add_input_float(label="Gain", default_value=self.app.CM.cameraGain, callback=lambda _, data: (setattr(self.app.CM, "cameraGain", data), self.app.CM.save()))
                     #dpg.add_input_float(label="Exposure", default_value=self.app.CM.cameraExposure, callback=lambda _, data: (setattr(self.app.CM, "cameraExposure", data), self.app.CM.save()))
+
 
         with dpg.window(tag="dialog_window", show=False, modal=True, no_move=True, no_title_bar=True, width=320):
             dpg.add_text(tag="dialog_window_title")

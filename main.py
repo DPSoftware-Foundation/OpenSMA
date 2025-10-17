@@ -36,7 +36,10 @@ class App:
         dpg.hide_item("dialog_window_bclose")
         dpg.set_value("dialog_window_title", "Please wait...")
         dpg.set_value("dialog_window_text", "Starting camera...")
-        self.cap = cv2.VideoCapture(self.CM.cameraID)
+        if self.CM.cameraID == -1:
+            self.cap = cv2.VideoCapture(self.CM.cameraURL)
+        else:
+            self.cap = cv2.VideoCapture(self.CM.cameraID)
         dpg.set_value("dialog_window_text", "apply camera settings...")
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.CM.cameraResolutionWidth)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.CM.cameraResolutionHeight)
@@ -212,6 +215,8 @@ class App:
 
         for camera_info in enumerate_cameras(cv2.CAP_ANY):
             self.camera_list.append([camera_info.index, camera_info.name])
+
+        self.camera_list.append([-1, "Network (HTTP/RTSP)"])
 
         dpg.set_value("starting_status", "Creating texture"); dpg.render_dearpygui_frame()
         texture_data = []
